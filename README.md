@@ -1,6 +1,6 @@
 # Jambonz AudioSocket
 
-This is an example applicaiton for working with websocket audio from the jambonz platform, calls are connected to a websocket using the [listen[(https://www.jambonz.org/docs/webhooks/listen/)] verb.
+This is an example applicaiton for working with websocket audio from the jambonz platform, calls are connected to a websocket using the [listen](https://www.jambonz.org/docs/webhooks/listen/) verb.
 
 The application demonstrates several things:
 - Serving the JSON required for connecting a call to the websocket and keeping track of all connections
