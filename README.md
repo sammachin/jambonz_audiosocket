@@ -18,4 +18,4 @@ To start the application run `node index.js`
 The application will listen on port 3000 by default 
 
 
-You will need to configure a jambonz applicaiton to send a webhook to your server on port 3000 at '/answer' for an incomming call, the application will need TTS to be setup as the initial greeting for the caller is done through the say verb.
+You will need to configure a jambonz applicaiton to send a webhook to your server on port 3000 at `/answer` for an incomming call, the application will need TTS to be setup as the initial greeting for the caller is done through the say verb.
