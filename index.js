@@ -19,6 +19,28 @@ app.post('/answer', (req, res) => {
   res.json(data)
 })
 
+// Playback hello.wav to each connected call
+app.get('/hello', (req, res) => {
+    let audioContent = fs.readFileSync('Digits/hello.wav', 'base64'); //Read the wav file and encode as base64
+    // Build the JSON message containing the audio and metadata
+    let playAudioData = JSON.stringify({ 
+        type: "playAudio",
+        data: {
+            audioContent: audioContent,
+            audioContentType: "wav",
+            sampleRate: "8000",
+        },
+    }); 
+    // Iterate over connected calls and send object
+    for (const [id, conn] of Object.entries(calls)) {
+        console.log(id) // Log call Sid
+        conn.send(playAudioData)
+    }
+  res.send('ok')
+})
+
+let calls = {}
+
 // Handle the WebSocket Connection
 app.ws('/socket', function(conn, req) {
     conn.on('message', function(msg) {
@@ -30,6 +52,8 @@ app.ws('/socket', function(conn, req) {
             if ("callSid" in data){ //This is the initial message for a new call
                 conn.calldata=data // Store the call data against the conn object 
                 conn.callBuffer =  Buffer.alloc(640) // allocate a buffer on the conn object to record the audio to
+                calls[data.callSid] = conn // Add the connection to the calls object keyed by callSid
+
             }    
             else if ("event" in data){ //This is a dtmf event message
                 let audioContent = fs.readFileSync(`Digits/${data.dtmf}.wav`, 'base64'); //Read the wav file and encode as base64
@@ -50,6 +74,7 @@ app.ws('/socket', function(conn, req) {
     });
     conn.on('close', function(){
         console.log('Call Ended') // When the websocket is closed the call is ended, we will now write the buffered RAW audio to a WAV file.
+        delete calls[conn.calldata.callSid] // Remove the connection from the calls object
         //Specify the WAV header data based on the contents of the inital message
         var options = {
             channels: conn.calldata.mixType=='mono' ? 1 : 2,
